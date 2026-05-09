@@ -1,0 +1,12 @@
+.venv/
+__pycache__/
+*.pyc
+
+# Runtime files
+phpsessid.txt
+result.html
+
+# Local editor/system files
+.DS_Store
+.idea/
+.vscode/
