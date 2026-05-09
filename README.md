@@ -1,12 +1,14 @@
-# Sign Link Web Service
+# sdufe-library-remote-checkin
 
-一个轻量 Flask 服务，用来在手机点击时实时生成签到跳转链接。
+山东财经大学图书馆远程签到辅助项目，仅供学习研究与自动化测试交流。
+
+这是一个轻量 Flask 服务：手机访问固定入口时，服务端实时获取最新参数并跳转到签到链接。`PHPSESSID` 过期时，页面会引导你更新新的会话值，无需重启服务。
 
 ## 功能
 
 - `GET /go`：实时获取最新参数并 302 跳转到签到入口。
 - `GET /link`：返回当前实时签到链接 JSON。
-- `GET /session`：手动更新 `PHPSESSID`。
+- `GET /session`：显示表单，手动更新 `PHPSESSID`。
 - `POST /session`：保存新的 `PHPSESSID` 到本地文件，立即生效。
 - `GET /health`：服务健康检查。
 
@@ -15,21 +17,31 @@
 ```powershell
 mkdir C:\signbot -Force
 cd C:\signbot
+py -m pip install -r requirements.txt
+```
+
+如果服务器上没有 `requirements.txt`，也可以直接安装：
+
+```powershell
 py -m pip install flask requests
 ```
 
-把 `sign_web.py` 放到 `C:\signbot\sign_web.py`。
+把 `sign_web.py` 放到：
+
+```text
+C:\signbot\sign_web.py
+```
 
 ## 配置
 
-可用环境变量：
+可选环境变量：
 
 ```powershell
 setx SCAN_SCHEME "http" /M
 setx PORT "8080" /M
 ```
 
-首次使用可以不设置 `PHPSESSID`，访问 `/go` 时会自动跳到 `/session` 页面，让你填入最新值。
+首次使用可以不设置 `PHPSESSID`。访问 `/go` 时，如果没有可用会话，会自动跳到 `/session` 页面让你填写。
 
 `PHPSESSID` 会保存到：
 
@@ -51,7 +63,7 @@ python C:\signbot\sign_web.py
 0.0.0.0:8080
 ```
 
-如果是云服务器，需要在安全组和 Windows 防火墙放行 TCP `8080`。
+如果部署在云服务器，需要在云安全组和 Windows 防火墙放行 TCP `8080`。
 
 ## 使用
 
@@ -85,5 +97,5 @@ schtasks /Run /TN "SignWeb"
 ## 注意
 
 - `PHPSESSID` 是登录会话，会过期。
-- 过期后访问 `/go` 会进入 `/session`，重新填一次即可。
+- 过期后访问 `/go` 会进入 `/session`，重新填写一次即可。
 - 建议后续给 `/session` 加密码保护，避免公开服务器被别人修改会话值。
